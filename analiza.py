@@ -19,4 +19,12 @@ iqr = Q3 - Q1
 
 oferty = oferty[oferty['stawka_pln'] <= 1.5*iqr]
 oferty["stawka_roczna"] = oferty["stawka_pln"]*12
-oferty.groupby
+
+statystyki = oferty.groupby('stanowisko')['stawka_pln'].agg(
+    liczba_ofert="count",
+    średnia="mean",
+    mediana="median",
+    odchylenie="std"
+)
+
+oferty.to_csv("oferty_it_czyste.csv", index=False)
