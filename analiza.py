@@ -3,10 +3,12 @@ import numpy as np
 
 # IMPORTING DATA AND DISPLAYING BASIC INFO
 oferty = pd.read_csv("oferty_it.csv")
-print(f"----------------------------------------\n\nWymiary tablicy: {oferty.shape}\n\n----------------------------------------\n\nINFO:\n{oferty.info}\n\n----------------------------------------\n\nBrakujące wartości:\n{oferty.isna().sum()}")
+print(f"----------------------------------------\n\nWymiary tablicy: {oferty.shape}\n\n----------------------------------------\n\nINFO:\n")
+oferty.info()
+print(f"\n\n----------------------------------------\n\nBrakujące wartości:\n{oferty.isna().sum()}")
 
 # CLEANING DATA
-oferty.drop_duplicates()
+oferty = oferty.drop_duplicates()
 oferty.replace(["Poznan", "data analyst"], ["Poznań", "Data Analyst"], inplace=True)
 oferty = oferty.dropna(subset=["stanowisko", "stawka_pln"])
 oferty['miasto'] = oferty["miasto"].fillna("Nie podano")
@@ -17,7 +19,7 @@ oferty = oferty[oferty['stawka_pln'] > 0]
 
 iqr = Q3 - Q1
 
-oferty = oferty[oferty['stawka_pln'] <= 1.5*iqr]
+oferty = oferty[oferty['stawka_pln'] <= Q3 + 1.5*iqr]
 oferty["stawka_roczna"] = oferty["stawka_pln"]*12
 
 statystyki = oferty.groupby('stanowisko')['stawka_pln'].agg(
