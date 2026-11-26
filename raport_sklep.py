@@ -4,11 +4,12 @@ import numpy as np
 klienci = pd.read_csv("klienci.csv")
 zamowienia = pd.read_csv("zamowienia.csv")
 
-# print(klienci["segment"].unique())
-# klienci = klienci.replace(["vip", "standard"], ["VIP", "Standard"])
-klienci.loc[klienci["segment"].str.strip().str.lower() == "vip", "segment"] = "VIP"
-klienci.loc[klienci["segment"].str.strip().str.lower() == "standard", "segment"] = "Standard"
-klienci.loc[klienci["segment"].str.strip().str.lower() == "premium", "segment"] = "Premium"
+segment_map = {
+    "vip":"VIP",
+    "standard":"Standard",
+    "premium":"Premium"
+}
+klienci["segment"] = klienci["segment"].str.strip().str.lower().replace(segment_map)
 # print(klienci["segment"].unique())
 
 klienci["miasto"] = klienci["miasto"].fillna("Brak danych")
@@ -24,6 +25,7 @@ status_map = {
 zamowienia["status"] = zamowienia["status"].str.strip().str.lower().replace(status_map)
 zamowienia = zamowienia.drop_duplicates()
 zamowienia = zamowienia[zamowienia["status"] == "Zrealizowane"]
+zamowienia = zamowienia[zamowienia["kwota_pln"] > 0]
 # print(zamowienia["status"].unique())
 
 Q1, Q3 = np.percentile(zamowienia["kwota_pln"], [25, 75])
@@ -43,6 +45,6 @@ print(polaczone.groupby("segment")["kwota_pln"].agg(
     liczba_zrealizowanych_zamowien="count"
 ))
 
-print(polaczone.groupby("miesiac")["kwota_pln"].sum())
+print(polaczone.groupby("miesiac")["kwota_pln"].sum().sort_index())
 
-polaczone.to_csv("raport_czysty.csv")
+polaczone.to_csv("raport_czysty.csv", index=False)
