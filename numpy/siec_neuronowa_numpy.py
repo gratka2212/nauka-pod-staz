@@ -3,7 +3,7 @@ rng = np.random.default_rng(seed=42)
 
 x = rng.normal(loc=50, scale=15, size=(100,4))
 
-y_true = np.random.randint(2, size=(100,))
+y_true = rng.integers(2, size=(100,))
 
 x_norm = (x - x.mean(axis=0))/x.std(axis=0)
 # print(x_norm.mean(axis=0), x_norm.std(axis=0))
